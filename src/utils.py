@@ -1,3 +1,4 @@
+from pydoc import locate
+
 def get_class_from_name(name):
-    # TODO implement
-    return None
+    return locate(name)

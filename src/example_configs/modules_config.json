@@ -1,0 +1,5 @@
+[{
+	"name": "detectors.ssh_detector.ssh_module.SSHModule",
+	"topic": "ssh",
+	"labler": "detectors.ssh_detector.ssh_labeler.SSHLabeler"
+}]

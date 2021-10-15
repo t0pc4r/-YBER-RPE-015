@@ -1,4 +1,4 @@
-from ...module import Module
+from module import Module
 
 class SSHModule(Module):
 
@@ -10,6 +10,22 @@ class SSHModule(Module):
 
     def get_query(self):
         return {
-            "ips": self.module_config["ips"]
+            'query': {
+               'bool': {
+                  'should': [{
+                        'match': {
+                            'destination.ip': '192.168.51.135'
+                      }
+                    }, {
+                        'match': {
+                            'source.ip': '192.168.51.138'
+                      }
+                    }, {
+                        'match': {
+                           'destination.port': 22
+                        }
+                    }]
+                }
+            }
         }
         

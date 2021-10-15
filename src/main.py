@@ -1,8 +1,8 @@
 import argparse
 import json
-import .utils
+import utils
 
-from .worker_pool import WorkerPool
+from worker_pool import WorkerPool
 
 def get_config_from_file(config_file):
     with open(config_file, "r") as f:
@@ -10,11 +10,16 @@ def get_config_from_file(config_file):
 
 def init_connector(elastic_config, rabbitmq_config, modules_config, connector_config):
     worker_pool = WorkerPool(rabbitmq_config, max_workers=connector_config["max_workers"])
+    worker_pool.start()
 
     modules = []
     
     for module_config in modules_config:
+        print(module_config)
         module_class = utils.get_class_from_name(module_config["name"])
+        if module_class is None:
+            print("Error, module: %s is not found" % module_config["name"])
+            continue
         module = module_class(elastic_config, module_config, worker_pool)
         modules.append(module)
     
@@ -29,13 +34,15 @@ def init_connector(elastic_config, rabbitmq_config, modules_config, connector_co
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
 
-    parser.add_argument("--elastic_config_file", required=True)
-    parser.add_argument("--rabbitmq_config_file", required=True)
-    parser.add_argument("--modules_config_file", required=True)
-    parser.add_argument("--connector_config_file", required=True)
+    parser.add_argument("--elastic-config-file", default="configs/elastic_config.json")
+    parser.add_argument("--rabbitmq-config-file", default="configs/rabbitmq_config.json")
+    parser.add_argument("--modules-config-file", default="configs/modules_config.json")
+    parser.add_argument("--connector-config-file", default="configs/connector_config.json")
     args = parser.parse_args()
 
     elastic_config = get_config_from_file(args.elastic_config_file)
     rabbitmq_config = get_config_from_file(args.rabbitmq_config_file)
     modules_config = get_config_from_file(args.modules_config_file)
     connector_config = get_config_from_file(args.connector_config_file)
+
+    init_connector(elastic_config, rabbitmq_config, modules_config, connector_config)

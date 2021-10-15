@@ -1,15 +1,16 @@
 from threading import Thread
 from elasticsearch import Elasticsearch
+from elasticsearch.helpers import scan
 
 class Module(Thread):
 
     def __init__(self, elastic_config, module_config, worker_pool):
+        super().__init__()
         self.elastic_config = elastic_config
         self.worker_pool = worker_pool
         self.module_config = module_config
     
     def run(self):
-        super.run()
         es = self.connect()
         self.start_getting_data(es)
         es.close()
@@ -23,28 +24,24 @@ class Module(Thread):
             port=self.elastic_config["elastic_port"],
         )
 
-    def get_data(self, es, query, max_size=1024):
-        query_result = es.search(query, size=max_size)
-        return query_result["hits"]["hits"]
-
     def send_to_labeler(self, labeler, topic, data):
         self.worker_pool.add_data(labeler, topic, data)
 
     def start_getting_data(self, es):
-        while True:
-            data = self.get_data(es, self.get_query())
-            if len(data) == 0:
-                break
-            self.send_to_labeler(self.get_labeler(), self.get_topic(), data)
-
-
-
+        query = self.get_query()
+        topic = self.get_topic()
+        labeler = self.get_labeler()
+        for data in scan(es, query):
+            self.send_to_labeler(labeler, topic, data)
 
     def get_labeler(self):
-        raise Exception("Not implemented")
+        return self.module_config["labler"]
 
     def get_topic(self):
-        raise Exception("Not implemented")
+        return self.module_config["topic"]
+
+
+
 
     def get_query(self):
         raise Exception("Not implemented")

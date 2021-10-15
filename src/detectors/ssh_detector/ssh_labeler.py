@@ -1,7 +1,7 @@
-from ...labeler import Labeler
+from labeler import Labeler
 
 class SSHLabeler(Labeler):
 
-    @staticmethod
-    def get_stix_data(topic, data):
+    @classmethod
+    def get_stix_data(cls, topic, data):
         return data

@@ -1,17 +1,18 @@
 class Labeler:
 
-    @staticmethod
-    def label(rabbitmq_config, topic, data):
-        stix_data = Labeler.get_stix_data(topic, data)
+    @classmethod
+    def label(cls, rabbitmq_config, topic, data):
+        stix_data = cls.get_stix_data(topic, data)
         Labeler.send_to_rabbitmq(rabbitmq_config, topic, stix_data)
 
-    @staticmethod
-    def send_to_rabbitmq(rabbitmq_config, topic, data):
+    @classmethod
+    def send_to_rabbitmq(cls, rabbitmq_config, topic, data):
         print("TODO let's pretend this actual send")
+        print("Sending %s : %s" % (topic, data))
     
 
 
 
-    @staticmethod
-    def get_stix_data(topic, data):
+    @classmethod
+    def get_stix_data(cls, topic, data):
         raise Exception("Not implemented")
