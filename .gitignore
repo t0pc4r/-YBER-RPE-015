@@ -1,3 +1,4 @@
 py39/
 src/configs/*
 *__pycache__*
+configs/*
