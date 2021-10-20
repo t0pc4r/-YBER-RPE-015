@@ -45,6 +45,9 @@ services:
     volumes:
       - amqpdata:/var/lib/rabbitmq
     restart: always
+    ports:
+      - "5672:5672"
+      - "15672:15672"
   opencti:
     image: opencti/platform:5.0.0
     environment:

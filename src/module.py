@@ -33,6 +33,7 @@ class Module(Thread):
         labeler = self.get_labeler()
         for data in scan(es, query):
             self.send_to_labeler(labeler, topic, data)
+            break
 
     def get_labeler(self):
         return self.module_config["labler"]
