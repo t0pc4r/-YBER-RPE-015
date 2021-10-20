@@ -1,5 +1,5 @@
 from threading import Thread
-from queue import Queue
+from queue import Queue, Empty
 
 import utils
 
@@ -14,7 +14,10 @@ class Worker(Thread):
 
     def run(self):
         while self.keep_running or not self.queue.empty():
-            labeler_name, topic, data = self.queue.get(timeout=self.timeout)
+            try:
+                labeler_name, topic, data = self.queue.get(timeout=self.timeout)
+            except Empty:
+                continue
             labeler = utils.get_class_from_name(labeler_name)
             if labeler is None:
                 print("Error, labeler: %s is not found" % labeler_name)

@@ -9,7 +9,7 @@ class Labeler:
     def send_to_rabbitmq(cls, rabbitmq_config, topic, data):
         print("TODO let's pretend this actual send")
         print("Sending %s : %s" % (topic, data))
-    
+
 
 
 

@@ -46,3 +46,4 @@ if __name__ == "__main__":
     connector_config = get_config_from_file(args.connector_config_file)
 
     init_connector(elastic_config, rabbitmq_config, modules_config, connector_config)
+    print("Done reading")
