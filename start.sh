@@ -1,2 +1,1 @@
-docker network create rpenet || true
-docker-compose up -d
+docker-compose -f connector_docker-compose.yml up -d

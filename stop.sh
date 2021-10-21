@@ -1,1 +1,1 @@
-docker-compose down -v
+docker-compose -f connector_docker-compose.yml down -v
