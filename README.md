@@ -27,7 +27,7 @@ Elasticsearch is running in the VM but the port is being forwarded to `19200` on
 ### Start the instance
 
 ```
-./start.sh
+./start_opencti.sh
 ```
 
 ### Log in
@@ -38,5 +38,31 @@ Password: openctiadminpassword
 ### Tear Down
 
 ```
-./stop.sh
+./stop_opencti.sh
 ```
+
+## Simple test
+
+- Build the connector
+
+```
+./build.sh
+```
+
+- Start OpenCTI
+
+```
+./start_opencti.sh
+```
+
+- Wait for the login page and then log in at `localhost:8000`
+- Click `Data` on the left side and then `Connectors` at the top
+- Notice that no connectors show up
+
+- Run the connector
+
+```
+./start.sh
+```
+
+- Notice that the ssh connector shows up and messages are ticking up

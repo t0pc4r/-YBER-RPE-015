@@ -1,4 +1,3 @@
 elasticsearch
 stix2
-pika
-pycti
+pycti==5.0.0

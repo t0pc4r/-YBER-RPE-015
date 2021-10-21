@@ -8,8 +8,8 @@ def get_config_from_file(config_file):
     with open(config_file, "r") as f:
         return json.loads(f.read())
 
-def init_connector(elastic_config, rabbitmq_config, modules_config, connector_config):
-    worker_pool = WorkerPool(rabbitmq_config, max_workers=connector_config["max_workers"])
+def init_connector(elastic_config, opencti_config, modules_config, connector_config):
+    worker_pool = WorkerPool(opencti_config, max_workers=connector_config["max_workers"])
     worker_pool.start()
     modules = []
 
@@ -34,15 +34,15 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
 
     parser.add_argument("--elastic-config-file", default="configs/elastic_config.json")
-    parser.add_argument("--rabbitmq-config-file", default="configs/rabbitmq_config.json")
+    parser.add_argument("--opencti-config-file", default="configs/opencti_config.json")
     parser.add_argument("--modules-config-file", default="configs/modules_config.json")
     parser.add_argument("--connector-config-file", default="configs/connector_config.json")
     args = parser.parse_args()
 
     elastic_config = get_config_from_file(args.elastic_config_file)
-    rabbitmq_config = get_config_from_file(args.rabbitmq_config_file)
+    opencti_config = get_config_from_file(args.opencti_config_file)
     modules_config = get_config_from_file(args.modules_config_file)
     connector_config = get_config_from_file(args.connector_config_file)
 
-    init_connector(elastic_config, rabbitmq_config, modules_config, connector_config)
+    init_connector(elastic_config, opencti_config, modules_config, connector_config)
     print("Done reading")

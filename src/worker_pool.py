@@ -1,5 +1,7 @@
 from threading import Thread
 from queue import Queue, Empty
+from pycti import OpenCTIConnectorHelper
+
 
 import time
 import pika
@@ -7,36 +9,43 @@ import utils
 
 class Worker(Thread):
 
-    def __init__(self, rabbitmq_config, queue, timeout=5):
+    def __init__(self, opencti_config, queue, timeout=5):
         super().__init__()
-        self.rabbitmq_config = rabbitmq_config
+        self.opencti_config = opencti_config
         self.queue = queue
         self.timeout = timeout
         self.keep_running = True
         self.has_finished = False
 
     def run(self):
-        rabbitmq_cxn = None
-        for _ in range(60):
-            print("Trying to get conn")
+        opencti_helper = None
+        for _ in range(20):
             try:
-                rabbit_cxn = pika.BlockingConnection(
-                    pika.ConnectionParameters(
-                        host=self.rabbitmq_config["host"],
-                        port=self.rabbitmq_config["port"],
-                        # credentials are from .env
-                        credentials=pika.PlainCredentials("admin", "password"),
-                    )
+                opencti_helper = OpenCTIConnectorHelper(
+                    {
+                        "opencti": {
+                            "url": "http://%s:%d" % (self.opencti_config["host"], self.opencti_config["port"]),
+                            "token": "537e583b-6e9a-4754-bafd-ba81038bdc35",
+                        },
+                        "connector": {
+                             "id": "ssh_connector_id",
+                            "type": "EXTERNAL_IMPORT",
+                            "name": "ssh_connector_name",
+                            "scope": "ssh_scope",
+                            "confidence_level": 0,
+                            "update_existing_data": False,
+                            "log_level": "info",
+                        }
+                    }
                 )
                 break
-            except pika.exceptions.AMQPConnectionError as e:
+            except ValueError:
                 time.sleep(1)
-                raise e
         else:
-            print("Could not get conn")
             self.has_finished = True
             return
-        print("Got conn")
+
+
         while self.keep_running or not self.queue.empty():
             try:
                 labeler_name, topic, data = self.queue.get(timeout=self.timeout)
@@ -46,8 +55,8 @@ class Worker(Thread):
             if labeler is None:
                 print("Error, labeler: %s is not found" % labeler_name)
                 continue
-            labeler.label(rabbit_cxn, topic, data)
-        self.rabbit_cxn.close()
+            labeler.label(opencti_helper, topic, data)
+        opencti_helper.close()
         self.has_finished = True
 
     def join(self):
@@ -59,11 +68,11 @@ class Worker(Thread):
 
 class WorkerPool:
 
-    def __init__(self, rabbitmq_config, max_workers=20):
+    def __init__(self, opencti_config, max_workers=20):
         self.queue = Queue()
         self.workers = []
         for _ in range(max_workers):
-            self.workers.append(Worker(rabbitmq_config, self.queue))
+            self.workers.append(Worker(opencti_config, self.queue))
 
     def start(self):
         for worker in self.workers:
