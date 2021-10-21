@@ -40,3 +40,29 @@ Password: openctiadminpassword
 ```
 ./stop_opencti.sh
 ```
+
+## Simple test
+
+- Build the connector
+
+```
+./build.sh
+```
+
+- Start OpenCTI
+
+```
+./start_opencti.sh
+```
+
+- Wait for the login page and then log in at `localhost:8000`
+- Click `Data` on the left side and then `Connectors` at the top
+- Notice that no connectors show up
+
+- Run the connector
+
+```
+./start.sh
+```
+
+- Notice that the ssh connector shows up and messages are ticking up
