@@ -1,1 +1,1 @@
-docker stop qyber-rpe15
+docker-compose down -v

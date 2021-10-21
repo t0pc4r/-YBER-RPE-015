@@ -1,1 +1,2 @@
-docker run -d --name qyber-rpe15 qyber-rpe15
+docker network create rpenet || true
+docker-compose up -d

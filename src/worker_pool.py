@@ -1,6 +1,8 @@
 from threading import Thread
 from queue import Queue, Empty
 
+import time
+import pika
 import utils
 
 class Worker(Thread):
@@ -11,8 +13,30 @@ class Worker(Thread):
         self.queue = queue
         self.timeout = timeout
         self.keep_running = True
+        self.has_finished = False
 
     def run(self):
+        rabbitmq_cxn = None
+        for _ in range(60):
+            print("Trying to get conn")
+            try:
+                rabbit_cxn = pika.BlockingConnection(
+                    pika.ConnectionParameters(
+                        host=self.rabbitmq_config["host"],
+                        port=self.rabbitmq_config["port"],
+                        # credentials are from .env
+                        credentials=pika.PlainCredentials("admin", "password"),
+                    )
+                )
+                break
+            except pika.exceptions.AMQPConnectionError as e:
+                time.sleep(1)
+                raise e
+        else:
+            print("Could not get conn")
+            self.has_finished = True
+            return
+        print("Got conn")
         while self.keep_running or not self.queue.empty():
             try:
                 labeler_name, topic, data = self.queue.get(timeout=self.timeout)
@@ -22,10 +46,14 @@ class Worker(Thread):
             if labeler is None:
                 print("Error, labeler: %s is not found" % labeler_name)
                 continue
-            labeler.label(self.rabbitmq_config, topic, data)
+            labeler.label(rabbit_cxn, topic, data)
+        self.rabbit_cxn.close()
+        self.has_finished = True
 
-    def stop(self):
+    def join(self):
         self.keep_running = False
+        while self.has_finished == False:
+            pass
 
 
 
@@ -41,9 +69,9 @@ class WorkerPool:
         for worker in self.workers:
             worker.start()
 
-    def stop(self):
+    def join(self):
         for worker in self.workers:
-            worker.stop()
+            worker.join()
 
     def add_data(self, labeler, topic, data):
         self.queue.put((labeler, topic, data))

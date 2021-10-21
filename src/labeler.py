@@ -1,5 +1,6 @@
 import base64
 import pika
+import json
 
 from pycti import (
     OpenCTIConnectorHelper,
@@ -16,18 +17,8 @@ class Labeler:
         Labeler.send_to_rabbitmq(rabbitmq_config, topic, stix_data)
 
     @classmethod
-    def send_to_rabbitmq(cls, rabbitmq_config, topic, data):
-        # Taken from https://github.com/OpenCTI-Platform/client-python/blob/master/pycti/connector/opencti_connector_helper.py
-        # Should probably use pycti library to do all of this
-        rabbit_cxn = pika.BlockingConnection(
-            pika.ConnectionParameters(
-                host=rabbitmq_config["host"],
-                port=rabbitmq_config["port"],
-                # credentials are from .env
-                credentials=pika.PlainCredentials("admin", "password"),
-            )
-        )
-        channel = rabbit_cxn.channel()
+    def send_to_rabbitmq(cls, rabbitmq_cxn, topic, data):
+        channel = rabbitmq_cxn.channel()
 
         message = {
             "applicant_id": "",
@@ -38,9 +29,9 @@ class Labeler:
         }
 
         channel.basic_publish(
-            exchange=self.config["push_exchange"],
-            routing_key="push_routing_" + self.connector_id,
-            body=json.dumps(message),
+            exchange="topic",
+            routing_key="push_routing_5dc128b8-d3f4-4562-9885-1b80cabdf5b2",
+            body=json.dumps(data),
             properties=pika.BasicProperties(
                 delivery_mode=2,  # make message persistent
             ),

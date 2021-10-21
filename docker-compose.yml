@@ -1,5 +1,7 @@
 version: '3'
 services:
+  connector:
+    image: qyber-rpe15
   redis:
     image: redis:6.2.5
     restart: always
@@ -315,3 +317,7 @@ volumes:
   s3data:
   redisdata:
   amqpdata:
+networks:
+  default:
+    external:
+      name: rpenet

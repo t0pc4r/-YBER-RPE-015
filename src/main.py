@@ -11,9 +11,8 @@ def get_config_from_file(config_file):
 def init_connector(elastic_config, rabbitmq_config, modules_config, connector_config):
     worker_pool = WorkerPool(rabbitmq_config, max_workers=connector_config["max_workers"])
     worker_pool.start()
-
     modules = []
-    
+
     for module_config in modules_config:
         print(module_config)
         module_class = utils.get_class_from_name(module_config["name"])
@@ -22,14 +21,14 @@ def init_connector(elastic_config, rabbitmq_config, modules_config, connector_co
             continue
         module = module_class(elastic_config, module_config, worker_pool)
         modules.append(module)
-    
+
     for module in modules:
         module.start()
-    
+
     for module in modules:
         module.join()
-    
-    worker_pool.stop()
+
+    worker_pool.join()
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
