@@ -1,1 +1,1 @@
-docker stop qyber-rpe15
+docker rm -f -v qyber-rpe15

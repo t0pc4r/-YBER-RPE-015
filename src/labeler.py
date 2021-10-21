@@ -1,12 +1,4 @@
-import base64
-import pika
-
-from pycti import (
-    OpenCTIConnectorHelper,
-    get_config_variable,
-    SimpleObservable,
-    OpenCTIStix2Utils,
-)
+from pycti import OpenCTIConnectorHelper
 
 class Labeler:
 
@@ -17,36 +9,25 @@ class Labeler:
 
     @classmethod
     def send_to_rabbitmq(cls, rabbitmq_config, topic, data):
-        # Taken from https://github.com/OpenCTI-Platform/client-python/blob/master/pycti/connector/opencti_connector_helper.py
-        # Should probably use pycti library to do all of this
-        rabbit_cxn = pika.BlockingConnection(
-            pika.ConnectionParameters(
-                host=rabbitmq_config["host"],
-                port=rabbitmq_config["port"],
-                # credentials are from .env
-                credentials=pika.PlainCredentials("admin", "password"),
-            )
-        )
-        channel = rabbit_cxn.channel()
-
-        message = {
-            "applicant_id": "",
-            "action_sequence": 0,
-            "entities_types": [],
-            "content": base64.b64encode(data.encode("utf-8")).decode("utf-8"),
-            "update": False,
-        }
-
-        channel.basic_publish(
-            exchange=self.config["push_exchange"],
-            routing_key="push_routing_" + self.connector_id,
-            body=json.dumps(message),
-            properties=pika.BasicProperties(
-                delivery_mode=2,  # make message persistent
-            ),
+        helper = OpenCTIConnectorHelper(
+            {
+                "opencti": {
+                    "url": "http://opencti:8000",
+                    "token": "537e583b-6e9a-4754-bafd-ba81038bdc35",
+                },
+                "connector": {
+                    "id": "ssh_connector_id",
+                    "type": "EXTERNAL_IMPORT",
+                    "name": "ssh_connector_name",
+                    "scope": "ssh_scope",
+                    "confidence_level": 0,
+                    "update_existing_data": False,
+                    "log_level": "info",
+                }
+            }
         )
 
-        channel.close()
+        helper.send_stix2_bundle(data)
 
         print("TODO let's pretend this actual send")
         print("Sending %s : %s" % (topic, data))

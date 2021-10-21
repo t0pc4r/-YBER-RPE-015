@@ -27,7 +27,7 @@ Elasticsearch is running in the VM but the port is being forwarded to `19200` on
 ### Start the instance
 
 ```
-./start.sh
+./start_opencti.sh
 ```
 
 ### Log in
@@ -38,5 +38,5 @@ Password: openctiadminpassword
 ### Tear Down
 
 ```
-./stop.sh
+./stop_opencti.sh
 ```
