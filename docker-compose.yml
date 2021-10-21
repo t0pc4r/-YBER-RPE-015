@@ -2,6 +2,8 @@ version: '3'
 services:
   connector:
     image: qyber-rpe15
+    environment:
+      - PYTHONUNBUFFERED=1
   elasticsearch: # this is needed for opencti
     image: docker.elastic.co/elasticsearch/elasticsearch:7.14.1
     volumes:

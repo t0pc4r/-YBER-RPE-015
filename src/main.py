@@ -14,7 +14,6 @@ def init_connector(elastic_config, opencti_config, modules_config, connector_con
     modules = []
 
     for module_config in modules_config:
-        print(module_config)
         module_class = utils.get_class_from_name(module_config["name"])
         if module_class is None:
             print("Error, module: %s is not found" % module_config["name"])
@@ -23,12 +22,15 @@ def init_connector(elastic_config, opencti_config, modules_config, connector_con
         modules.append(module)
 
     for module in modules:
+        print("Starting module: %s" % module)
         module.start()
 
     for module in modules:
         module.join()
+        print("Finished module: %s" % module)
 
     worker_pool.join()
+    print("All workers finished")
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()

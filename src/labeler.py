@@ -9,8 +9,6 @@ class Labeler:
     def send_to_opencti(cls,opencti_helper, topic, data):
         opencti_helper.send_stix2_bundle(data)
 
-        print("Sending %s : %s" % (topic, data))
-
 
 
 

@@ -34,7 +34,7 @@ class Worker(Thread):
                             "scope": "ssh_scope",
                             "confidence_level": 0,
                             "update_existing_data": False,
-                            "log_level": "info",
+                            "log_level": "warn",
                         }
                     }
                 )
@@ -56,7 +56,6 @@ class Worker(Thread):
                 print("Error, labeler: %s is not found" % labeler_name)
                 continue
             labeler.label(opencti_helper, topic, data)
-        opencti_helper.close()
         self.has_finished = True
 
     def join(self):
@@ -76,11 +75,13 @@ class WorkerPool:
 
     def start(self):
         for worker in self.workers:
+            print("Starting worker: %s" % worker)
             worker.start()
 
     def join(self):
         for worker in self.workers:
             worker.join()
+            print("Finished worker: %s" % worker)
 
     def add_data(self, labeler, topic, data):
         self.queue.put((labeler, topic, data))
