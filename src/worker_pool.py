@@ -79,6 +79,7 @@ class WorkerPool:
             worker.start()
 
     def join(self):
+        print("Beginning to stop worker pool with queue size: %d" % self.queue.qsize())
         for worker in self.workers:
             worker.join()
             print("Finished worker: %s" % worker)
