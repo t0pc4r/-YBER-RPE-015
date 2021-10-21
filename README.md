@@ -22,6 +22,20 @@ http://10.137.85.33:5601/app/discover#/?_g=(filters:!(),query:(language:kuery,qu
 
 Elasticsearch is running in the VM but the port is being forwarded to `19200` on the `10.137.85.33` host.
 
+## Connector
+
+### Start the connector
+
+```
+./start.sh
+```
+
+### Tear down
+
+```
+./stop.sh
+```
+
 ## OpenCTI
 
 ### Start the instance
@@ -42,6 +56,8 @@ Password: openctiadminpassword
 ```
 
 ## Simple test
+
+You can run the entire system by running `./run.sh`. Otherwise, you can follow these steps
 
 - Build the connector
 
@@ -66,3 +82,4 @@ Password: openctiadminpassword
 ```
 
 - Notice that the ssh connector shows up and messages are ticking up
+
