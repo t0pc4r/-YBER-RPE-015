@@ -21,7 +21,7 @@ class Worker(Thread):
 
     def run(self):
         opencti_helper = None
-        for _ in range(self.MAX_TRIES):
+        for _ in range(Worker.MAX_TRIES):
             try:
                 opencti_helper = OpenCTIConnectorHelper(
                     {
@@ -44,7 +44,7 @@ class Worker(Thread):
             except ValueError:
                 time.sleep(1)
         else:
-            print("Could not connect to OpenCTI after %d seconds" % self.MAX_TRIES)
+            print("Could not connect to OpenCTI after %d seconds" % Worker.MAX_TRIES)
             self.has_finished = True
             return
         print("Got OpenCTI Connection")

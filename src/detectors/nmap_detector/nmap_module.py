@@ -32,7 +32,7 @@ class NMapModule(Module):
                                 "ip_range": self.module_config["destination_block"],
                                 "protocol": protocols_results["key"],
                                 "start_time": dates_results["key"],
-                                "end_Tme": dates_results["key"] + self.module_config["time_window_minutes"] * 60000,
+                                "end_time": dates_results["key"] + self.module_config["time_window_minutes"] * 60000,
                             }
                             self.send_to_labeler(labeler, topic, data)
 

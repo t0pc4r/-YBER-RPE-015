@@ -3,8 +3,11 @@ import uuid
 from labeler import Labeler
 
 from stix2 import Bundle, NetworkTraffic, IPv4Address, Tool, Relationship
+from init_labeler import ThreatActorLabeler
 
 class SSHLabeler(Labeler):
+
+    ssh_id = "tool--%s" % uuid.uuid4()
 
     @classmethod
     def get_stix_data(cls, topic, data):
@@ -25,18 +28,18 @@ class SSHLabeler(Labeler):
         ssh_tool = Tool(
             tool_types=["remote-access"],
             name="SSH",
-            id="tool--760ba490-f154-4dbb-a45c-b47115a907a6"
+            id=SSHLabeler.ssh_id
         )
 
         uses_network_traffic = Relationship(
-           source_ref="tool--760ba490-f154-4dbb-a45c-b47115a907a6",
-            target_ref=traffic_id,
-            relationship_type="derived_From",
+            source_ref=traffic_id,
+            target_ref=SSHLabeler.ssh_id,
+            relationship_type="uses",
         )
 
         uses_ssh = Relationship(
-           source_ref="threat-actor--9a685afb-894d-4eb8-8243-66da88161295",
-            target_ref="tool--760ba490-f154-4dbb-a45c-b47115a907a6",
+           source_ref=ThreatActorLabeler.actor_id,
+            target_ref=SSHLabeler.ssh_id,
             relationship_type="uses",
         )
 

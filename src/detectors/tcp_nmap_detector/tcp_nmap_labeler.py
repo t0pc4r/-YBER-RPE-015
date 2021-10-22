@@ -1,18 +1,35 @@
 from labeler import Labeler
-from stix2 import Bundle, Tool, Relationship
+from stix2 import Bundle, Tool, Relationship, AttackPattern
+from init_labeler import ThreatActorLabeler
+
+import uuid
+import json
 
 class TCPNMapLabeler(Labeler):
 
+    tcp_nmap_id = "tool--%s" % uuid.uuid4()
+
     @classmethod
     def get_stix_data(cls, topic, data):
+        attack_pattern_id = "attack-pattern--%s" % uuid.uuid4()
+        nmap_pattern = AttackPattern(
+            name="Port Scan",
+            description=json.dumps(data),
+            id=attack_pattern_id
+        )
         nmap_tool = Tool(
             tool_types=["vulnerability-scanning", "information-gathering"],
             name="NMap Port Scan",
-            id="tool--f26511e6-ca10-467c-9af3-292fa1dc7dea"
+            id=TCPNMapLabeler.tcp_nmap_id
+        )
+        uses_port_scan = Relationship(
+            source_ref=attack_pattern_id,
+            target_ref=TCPNMapLabeler.tcp_nmap_id,
+            relationship_type="derived_from",
         )
         uses_nmap = Relationship(
-            source_ref="threat-actor--9a685afb-894d-4eb8-8243-66da88161295",
-            target_ref="tool--f26511e6-ca10-467c-9af3-292fa1dc7dea",
+            source_ref=ThreatActorLabeler.actor_id,
+            target_ref=TCPNMapLabeler.tcp_nmap_id,
             relationship_type="uses",
         )
-        return Bundle(objects=[nmap_tool, uses_nmap])
+        return Bundle(objects=[nmap_pattern, nmap_tool, uses_nmap, uses_port_scan])
