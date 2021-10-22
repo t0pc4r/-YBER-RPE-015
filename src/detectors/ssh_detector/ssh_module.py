@@ -12,7 +12,7 @@ class SSHModule(Module):
         return {
             'query': {
                'bool': {
-                  'should': [{
+                  'must': [{
                         'match': {
                             'destination.ip': '192.168.51.135'
                       }
