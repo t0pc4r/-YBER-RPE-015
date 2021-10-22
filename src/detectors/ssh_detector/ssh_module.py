@@ -14,11 +14,11 @@ class SSHModule(Module):
                'bool': {
                   'must': [{
                         'match': {
-                            'destination.ip': '192.168.51.135'
+                            'destination.ip': self.module_config["dst"]
                       }
                     }, {
                         'match': {
-                            'source.ip': '192.168.51.138'
+                            'source.ip': self.module_config["src"]
                       }
                     }, {
                         'match': {

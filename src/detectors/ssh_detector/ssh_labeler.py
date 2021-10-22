@@ -17,5 +17,4 @@ class SSHLabeler(Labeler):
             protocols=["ipv4, tcp"],
         )
 
-        bundle = Bundle(objects=[source_ip, destination_ip, network_traffic]).serialize()
-        return bundle
+        return Bundle(objects=[source_ip, destination_ip, network_traffic]).serialize()
