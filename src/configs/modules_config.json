@@ -1,0 +1,25 @@
+[{
+	"name": "detectors.tcp_nmap_detector.tcp_nmap_module.TCPNMapModule",
+	"topic": "tcp_nmap",
+	"labler": "detectors.tcp_nmap_detector.tcp_nmap_labeler.TCPNMapLabeler",
+	"destination_block": "192.168.51.0/24",
+	"time_window_minutes": 30,
+	"min_ports_polled": 512
+}, {
+	"name": "detectors.nmap_detector.nmap_module.NMapModule",
+	"topic": "nmap",
+	"labler": "detectors.nmap_detector.nmap_labeler.NMapLabeler",
+	"destination_block": "192.168.51.0/24",
+	"time_window_minutes": 30,
+	"min_ips_polled": 200
+}, {
+	"name": "detectors.ssh_detector.ssh_module.SSHModule",
+	"topic": "ssh",
+	"labler": "detectors.ssh_detector.ssh_labeler.SSHLabeler",
+	"dst": "192.168.51.135",
+	"src": "192.168.51.138"
+}, {
+	"name": "detectors.modbus_scan.modbus_module.ModbusModule",
+	"topic": "modbus",
+	"labler": "detectors.modbus_scan.modbus_labeler.ModbusLabeler"
+}]
