@@ -9,7 +9,7 @@ class Labeler:
     def send_to_opencti(cls,opencti_helper, topic, data):
         if data is not None:
             print("Sending: %s" % data)
-            opencti_helper.send_stix2_bundle(data)
+            opencti_helper.send_stix2_bundle(data.serialize())
 
 
 

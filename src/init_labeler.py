@@ -1,15 +1,15 @@
 from labeler import Labeler
 
-from stix2 import Bundle, Identity
+from stix2 import Bundle,  ThreatActor
 
 class InitLabeler(Labeler):
 
     @classmethod
     def get_stix_data(cls, topic, data):
-        actor = Identity(
+        actor =  ThreatActor(
             name=data["name"],
-            identity_class="individual",
-            description="A person",
+            threat_actor_types=["hacker"],
+            id="threat-actor--9a685afb-894d-4eb8-8243-66da88161295"
         )
 
-        return Bundle(objects=[actor]).serialize()
+        return Bundle(objects=[actor])
