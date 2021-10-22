@@ -66,13 +66,13 @@ services:
       - APP__COOKIE_SECURE=false
       - REDIS__HOSTNAME=redis
       - REDIS__PORT=6379
-      - ELASTICSEARCH__URL=http://rpe-015_elasticsearch_1:9200
+      - ELASTICSEARCH__URL=http://elasticsearch:9200
       - MINIO__ENDPOINT=minio
       - MINIO__PORT=9000
       - MINIO__USE_SSL=false
       - MINIO__ACCESS_KEY=${MINIO_ACCESS_KEY}
       - MINIO__SECRET_KEY=${MINIO_SECRET_KEY}
-      - RABBITMQ__HOSTNAME=rpe-015_rabbitmq_1
+      - RABBITMQ__HOSTNAME=rabbitmq
       - RABBITMQ__PORT=5672
       - RABBITMQ__PORT_MANAGEMENT=15672
       - RABBITMQ__MANAGEMENT_SSL=false

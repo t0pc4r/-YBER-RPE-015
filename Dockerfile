@@ -8,6 +8,8 @@ COPY src/requirements.txt /src/requirements.txt
 
 RUN pip3 install --no-cache-dir -r /src/requirements.txt
 
+COPY configs /src/configs
+
 COPY src /src
 
 WORKDIR /src
