@@ -1,6 +1,6 @@
 {
 	"elastic_host": "10.137.85.33",
-	"elastic_port": 19200,
+	"elastic_port": 29200,
 	"username": "peraton",
 	"password": "XXXXXXXXXXXx",
 	"use_secure": false

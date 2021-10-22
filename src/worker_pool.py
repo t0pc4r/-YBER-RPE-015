@@ -4,7 +4,6 @@ from pycti import OpenCTIConnectorHelper
 
 
 import time
-import pika
 import utils
 
 class Worker(Thread):

@@ -1,4 +1,4 @@
 {
-    "host": "localhost",
-    "port": 5672
+    "host": "opencti",
+    "port": 8000
 }
