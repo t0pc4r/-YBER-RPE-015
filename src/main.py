@@ -13,6 +13,9 @@ def init_connector(elastic_config, opencti_config, modules_config, connector_con
     worker_pool.start()
     modules = []
 
+
+    worker_pool.add_data("init_labeler.InitLabeler", "actor", {"name": "DreadRiver"})
+
     for module_config in modules_config:
         module_class = utils.get_class_from_name(module_config["name"])
         if module_class is None:
