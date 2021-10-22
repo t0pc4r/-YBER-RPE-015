@@ -1,20 +1,14 @@
 from module import Module
 
 class NMapModule(Module):
-
-    def get_labeler_name(self):
-        return "nmap_labeler"
-
-    def get_topic(self):
-        return "nmap"
-    
+  
     def start_getting_data(self, es):
         topic = self.get_topic()
         labeler = self.get_labeler()
 
         fields = [
             ("source.ip", "destination.ip", "network.transport"),
-            ("zeek.notice.id.orig_h ", "zeek.notice.id.resp_h", "zeek.notice.id.note"), # no proto field was observed and no instances of zeek.notice have been observed anyway
+            ("zeek.notice.id.orig_h", "zeek.notice.id.resp_h", "zeek.notice.id.note"), # no proto field was observed and no instances of zeek.notice have been observed anyway
             ("netflow.source_ipv4_address", "netflow.destination_ipv4_address", "netflow.protocol_identifier"),
             ("suricata.eve.src_ip", "suricata.eve.dst_ip", "suricata.eve.proto"),
         ]

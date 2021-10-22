@@ -1,5 +1,9 @@
 # RPE-015
 
+## Running Everything
+
+To run everything, simply verify the config files in `src/configs/` and `.env` and then run `./run.sh`. Go to `http://localhost:8000` with the supplied credentials to view the results
+
 ## VM Info
 
 While on the lab network, the VM can be reached by ssh'ing to IP 10.137.85.33 on port 10022:
@@ -82,4 +86,3 @@ You can run the entire system by running `./run.sh`. Otherwise, you can follow t
 ```
 
 - Notice that the ssh connector shows up and messages are ticking up
-

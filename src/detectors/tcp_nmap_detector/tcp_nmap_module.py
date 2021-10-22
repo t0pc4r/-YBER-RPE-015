@@ -3,12 +3,6 @@ from module import Module
 
 class TCPNMapModule(Module):
 
-    def get_labeler_name(self):
-        return "tcp_nmap_labeler"
-
-    def get_topic(self):
-        return "tcp_nmap"
-    
     def start_getting_data(self, es):
         topic = self.get_topic()
         labeler = self.get_labeler()
