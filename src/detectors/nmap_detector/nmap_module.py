@@ -17,18 +17,19 @@ class NMapModule(Module):
             ("id.orig_h", "id.resp_h"),
             ("client_addr", "server_addr"),
         ]
+        min_ips_polled = self.module_config["min_ips_polled"]
         for field in fields:
             query = self.get_dsts_query(*field)
             results = es.search(body=query, size=10000)
             for source_results in results["aggregations"]["sources"]["buckets"]:
                 for dates_results in source_results["dates"]["buckets"]:
                     num_unique = dates_results["destinations"]["value"]
-                    if num_unique > 200:
+                    if num_unique >= min_ips_polled:
                         data = {
                             "src_ip": source_results["key"],
-                            "ip_range": "192.168.51.0/24",
+                            "ip_range": self.module_config["destination_block"],
                             "start_time": dates_results["key"],
-                            "end_Tme": dates_results["key"] + 1800000,
+                            "end_Tme": dates_results["key"] + self.module_config["time_window_minutes"] * 60000,
                         }
                         self.send_to_labeler(labeler, topic, data)
 
@@ -39,7 +40,7 @@ class NMapModule(Module):
                     "must": [
                         {
                             "term": {
-                                destination_field: "192.168.51.0/24"
+                                destination_field: self.module_config["destination_block"]
                             }
                         }
                     ]
@@ -54,7 +55,7 @@ class NMapModule(Module):
                         "dates": {
                             "date_histogram": {
                                 "field": "@timestamp",
-                                "interval": "30m"
+                                "interval": "%dm" % self.module_config["time_window_minutes"]
                             },
                             "aggs": {
                                 "destinations": {

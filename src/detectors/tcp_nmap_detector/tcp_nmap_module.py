@@ -17,6 +17,7 @@ class TCPNMapModule(Module):
             ("id.orig_h", "id.resp_h", "id.resp_p"),
             ("client_addr", "server_addr", "server_port"),
         ]
+        min_ports_polled = self.module_config["min_ports_polled"]
         for field in fields:
             query = self.get_dsts_query(*field)
             results = es.search(body=query, size=10000)
@@ -24,12 +25,12 @@ class TCPNMapModule(Module):
                 for dates_results in source_results["dates"]["buckets"]:
                     for destinations_results in dates_results["destinations"]["buckets"]:
                         num_unique = destinations_results["ports"]["value"]
-                        if num_unique > 512:
+                        if num_unique > min_ports_polled:
                             data = {
                                 "src_ip": source_results["key"],
                                 "dst_ip": destinations_results["key"],
                                 "start_time": dates_results["key"],
-                                "end_Tme": dates_results["key"] + 300000,
+                                "end_Tme": dates_results["key"] + self.module_config["time_window_minutes"] * 60000,
                             }
                             self.send_to_labeler(labeler, topic, data)
 
@@ -40,7 +41,7 @@ class TCPNMapModule(Module):
                     "must": [
                         {
                             "term": {
-                                destination_field: "192.168.51.0/24"
+                                destination_field: self.module_config["destination_block"]
                             }
                         }
                     ]
@@ -55,7 +56,7 @@ class TCPNMapModule(Module):
                         "dates": {
                             "date_histogram": {
                                 "field": "@timestamp",
-                                "interval": "30m"
+                                "interval": "%dm" % self.module_config["time_window_minutes"]
                             },
                             "aggs": {
                                 "destinations": {
