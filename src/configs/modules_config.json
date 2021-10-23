@@ -26,4 +26,10 @@
 	"name": "detectors.traffic_detector.traffic_module.TrafficModule",
 	"topic": "traffic",
 	"labler": "detectors.traffic_detector.traffic_labeler.TrafficLabeler"
+}, {
+	"name": "detectors.lease_detector.lease_module.LeaseModule",
+	"topic": "lease",
+	"labler": "detectors.lease_detector.lease_labeler.LeaseLabeler",
+	"subnet_start": "192.168.51.0",
+	"subnet_end": "192.168.51.255"
 }]

@@ -15,7 +15,7 @@ class LeaseModule(Module):
 
         return {"query": {
                 "query_string": {
-                  "query": "zeek.dhcp.address.client:[192.168.51.0 TO 192.168.51.255]"
+                  "query": f"zeek.dhcp.address.client:[{self.module_config['subnet_start']} TO {self.module_config['subnet_end']}]"
                         }
                     }
                 }
