@@ -1,0 +1,111 @@
+version: '3'
+services:
+  connector:
+    image: qyber-rpe15
+    environment:
+      - PYTHONUNBUFFERED=1
+  elasticsearch: # this is needed for opencti
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.14.1
+    volumes:
+      - esdata:/usr/share/elasticsearch/data
+    environment:
+      - discovery.type=single-node
+      - ES_JAVA_OPTS=-Xmx8G
+      - xpack.ml.enabled=false
+    restart: always
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+      nofile:
+        soft: 65536
+        hard: 65536
+  redis:
+    image: redis:6.2.5
+    restart: always
+    volumes:
+      - redisdata:/data
+  minio:
+    image: minio/minio:RELEASE.2021-08-25T00-41-18Z
+    volumes:
+      - s3data:/data
+    ports:
+      - "9000:9000"
+    environment:
+      MINIO_ACCESS_KEY: ${MINIO_ACCESS_KEY}
+      MINIO_SECRET_KEY: ${MINIO_SECRET_KEY}
+    command: server /data
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
+      interval: 30s
+      timeout: 20s
+      retries: 3
+    restart: always
+  rabbitmq:
+    image: rabbitmq:3.8-management
+    environment:
+      - RABBITMQ_DEFAULT_USER=${RABBITMQ_DEFAULT_USER}
+      - RABBITMQ_DEFAULT_PASS=${RABBITMQ_DEFAULT_PASS}
+    volumes:
+      - amqpdata:/var/lib/rabbitmq
+    restart: always
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+  opencti:
+    image: opencti/platform:5.0.0
+    environment:
+      - NODE_OPTIONS=--max-old-space-size=8096
+      - APP__PORT=8000
+      - APP__ADMIN__EMAIL=${OPENCTI_ADMIN_EMAIL}
+      - APP__ADMIN__PASSWORD=${OPENCTI_ADMIN_PASSWORD}
+      - APP__ADMIN__TOKEN=${OPENCTI_ADMIN_TOKEN}
+      - APP__LOGS_LEVEL=error
+      - APP__LOGS=./logs
+      - APP__REACTIVE=true
+      - APP__COOKIE_SECURE=false
+      - REDIS__HOSTNAME=redis
+      - REDIS__PORT=6379
+      - ELASTICSEARCH__URL=http://rpe-015_elasticsearch_1:9200
+      - MINIO__ENDPOINT=minio
+      - MINIO__PORT=9000
+      - MINIO__USE_SSL=false
+      - MINIO__ACCESS_KEY=${MINIO_ACCESS_KEY}
+      - MINIO__SECRET_KEY=${MINIO_SECRET_KEY}
+      - RABBITMQ__HOSTNAME=rpe-015_rabbitmq_1
+      - RABBITMQ__PORT=5672
+      - RABBITMQ__PORT_MANAGEMENT=15672
+      - RABBITMQ__MANAGEMENT_SSL=false
+      - RABBITMQ__USERNAME=${RABBITMQ_DEFAULT_USER}
+      - RABBITMQ__PASSWORD=${RABBITMQ_DEFAULT_PASS}
+      - SUBSCRIPTION_SCHEDULER__ENABLED=false
+      - PROVIDERS__LOCAL__STRATEGY=LocalStrategy
+    ports:
+      - "8000:8000"
+    depends_on:
+      - redis
+      - minio
+      - rabbitmq
+      - elasticsearch
+    restart: always
+  worker:
+    image: opencti/worker:5.0.0
+    environment:
+      - OPENCTI_URL=${OPENCTI_URL}
+      - OPENCTI_TOKEN=${OPENCTI_ADMIN_TOKEN}
+      - WORKER_LOG_LEVEL=error
+    depends_on:
+      - opencti
+    deploy:
+      mode: replicated
+      replicas: 3
+    restart: always
+volumes:
+  esdata:
+  s3data:
+  redisdata:
+  amqpdata:
+networks:
+  default:
+    external:
+      name: rpenet

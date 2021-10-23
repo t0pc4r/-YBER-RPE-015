@@ -1,0 +1,11 @@
+version: '3'
+services:
+  connector:
+    image: qyber-rpe15
+    environment:
+      - PYTHONUNBUFFERED=1
+networks:
+  default:
+    external:
+      name: rpenet
+

@@ -5,9 +5,9 @@ from labeler import Labeler
 from stix2 import Bundle, NetworkTraffic, IPv4Address, Tool, Relationship
 from init_labeler import ThreatActorLabeler
 
-class SSHLabeler(Labeler):
+class ModbusLabeler(Labeler):
 
-    ssh_id = "tool--%s" % uuid.uuid4()
+    modbus_id = "tool--%s" % uuid.uuid4()
 
     @classmethod
     def get_stix_data(cls, topic, data):
@@ -25,22 +25,22 @@ class SSHLabeler(Labeler):
             id=traffic_id
         )
 
-        ssh_tool = Tool(
+        modbus_tool = Tool(
             tool_types=["remote-access"],
-            name="SSH",
-            id=SSHLabeler.ssh_id
+            name="Modbus",
+            id=ModbusLabeler.modbus_id
         )
 
         uses_network_traffic = Relationship(
             source_ref=traffic_id,
-            target_ref=SSHLabeler.ssh_id,
+            target_ref=ModbusLabeler.modbus_id,
             relationship_type="uses",
         )
 
-        uses_ssh = Relationship(
+        uses_modbus = Relationship(
            source_ref=ThreatActorLabeler.actor_id,
-            target_ref=SSHLabeler.ssh_id,
+            target_ref=ModbusLabeler.modbus_id,
             relationship_type="uses",
         )
 
-        return Bundle(objects=[source_ip, destination_ip, network_traffic, ssh_tool, uses_network_traffic, uses_ssh])
+        return Bundle(objects=[source_ip, destination_ip, network_traffic, modbus_tool, uses_network_traffic, uses_modbus])

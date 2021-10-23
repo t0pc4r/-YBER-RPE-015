@@ -22,6 +22,7 @@ class Module(Thread):
             http_auth=(self.elastic_config["username"], self.elastic_config["password"]),
             scheme=protocol,
             port=self.elastic_config["elastic_port"],
+            timeout=600,
         )
 
     def send_to_labeler(self, labeler, topic, data):

@@ -1,15 +1,15 @@
 class Labeler:
 
     @classmethod
-    def label(cls, rabbitmq_config, topic, data):
+    def label(cls, opencti_helper, topic, data):
         stix_data = cls.get_stix_data(topic, data)
-        Labeler.send_to_rabbitmq(rabbitmq_config, topic, stix_data)
+        Labeler.send_to_opencti(opencti_helper, topic, stix_data)
 
     @classmethod
-    def send_to_rabbitmq(cls, rabbitmq_config, topic, data):
-        print("TODO let's pretend this actual send")
-        print("Sending %s : %s" % (topic, data))
-    
+    def send_to_opencti(cls,opencti_helper, topic, data):
+        if data is not None:
+            opencti_helper.send_stix2_bundle(data.serialize())
+
 
 
 

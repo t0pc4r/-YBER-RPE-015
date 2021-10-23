@@ -1,22 +1,28 @@
 from module import Module
 
-class SSHModule(Module):
+class ModbusModule(Module):
+
+    def get_labeler_name(self):
+        return "modbus_labeler"
+
+    def get_topic(self):
+        return "modbus"
 
     def get_query(self):
         return {
             'query': {
                'bool': {
                   'must': [{
-                        'match': {
-                            'destination.ip': self.module_config["dst"]
+                        'range': {
+                            'destination.bytes': {"gte": 0}
                       }
                     }, {
                         'match': {
-                            'source.ip': self.module_config["src"]
+                            'source.ip': '192.168.50.115'
                       }
                     }, {
                         'match': {
-                           'destination.port': 22
+                           'destination.port': 502
                         }
                     }]
                 }
